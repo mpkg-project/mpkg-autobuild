@@ -1,0 +1,41 @@
+name: Publish
+
+on: 
+  schedule:
+    - cron: '0 21 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7' 
+    - name: Set up mpkg
+      env:
+        repo: ${{ github.repository }}
+      run: |
+        pip install git+https://github.com/mpkg-project/mpkg.git -q
+        #pip install mpkg==0.0.6
+        python3 main.py $repo
+        echo ::set-env name=date::$(date +%y%m%d)
+    - name: Upload data to AutoBuild
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/*
+        tag: AutoBuild
+        overwrite: true
+        file_glob: true
+    - name: Upload data to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: release/*
+        tag: ${{ env.date }}
+        overwrite: false
+        file_glob: true
