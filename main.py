@@ -95,7 +95,7 @@ if not os.path.exists('release'):
 
 os.system('mpkg set unsafe yes')
 
-for type in ['main', 'extras']:
+for type in ['main', 'extras', 'scoop']:
     os.system(
         f'wget -q https://github.com/{repo}/releases/download/AutoBuild/{type}.json')
     if not os.path.exists(f'{type}.json'):
@@ -112,7 +112,8 @@ for type in ['main', 'extras']:
 
     data = {}
     data['packages'] = softs
-    with open('release/'+type+'.json', 'w', encoding='utf8') as f:
+    filename = 'release/'+type+'.json' if not type == 'scoop' else 'scoop.json'
+    with open(filename, 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
 
 if not os.path.exists('release/warning.txt'):
