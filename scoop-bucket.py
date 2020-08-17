@@ -14,6 +14,7 @@ class Package(Soft):
     ID = 'scoop-bucket'
 
     def _prepare(self):
+        self.data.ver = 'nightly'
         parser = Load(
             'https://github.com/zpcc/mpkg-pkgs/raw/master/parser/common.py->common-scoop_bucket.py')[0][0].scoop
 
