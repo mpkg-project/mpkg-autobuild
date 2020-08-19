@@ -5,8 +5,8 @@ from mpkg.common import Soft
 from mpkg.load import Load
 from mpkg.utils import Download, Extract
 
-os.system('sudo apt-get update')
-os.system('sudo apt-get install -y p7zip-full')
+#os.system('sudo apt-get update')
+#os.system('sudo apt-get install -y p7zip-full')
 os.system(r'mpkg set 7z "7z x {filepath} -o{root} -aoa > nul"')
 
 
