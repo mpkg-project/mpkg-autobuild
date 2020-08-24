@@ -3,14 +3,17 @@
 
 import json
 import os
+import re
 from multiprocessing.dummy import Pool
 from sys import argv
 
 from mpkg.config import HOME, GetConfig, SetConfig
 from mpkg.load import HasConflict, Load, Prepare, Sorted
-from mpkg.utils import PreInstall
+from mpkg.utils import GetPage, PreInstall
 
 jobs = 10
+merged = re.findall('^merging (.*)', GetPage(
+    'https://github.com/mpkg-project/mpkg-autobuild/releases/download/AutoBuild/warning.txt'), re.M)
 
 
 def readlist(file) -> list:
@@ -81,9 +84,12 @@ def merge_softs(old, new, output=False):
     new = dict([(soft['id'], soft) for soft in new])
     for k, v in old.items():
         if not k in new:
-            if output:
-                write(f'merging {k}')
-            new[k] = v
+            if k in merged:
+                write(f'deprecate {k}')
+            else:
+                if output:
+                    write(f'merging {k}')
+                new[k] = v
     return list(new.values())
 
 
