@@ -12,8 +12,12 @@ from mpkg.load import HasConflict, Load, Prepare, Sorted
 from mpkg.utils import GetPage, PreInstall
 
 jobs = 10
-merged = re.findall('^merging (.*)', GetPage(
-    'https://github.com/mpkg-project/mpkg-autobuild/releases/download/AutoBuild/warning.txt'), re.M)
+
+s = GetPage(
+    'https://github.com/mpkg-project/mpkg-autobuild/releases/download/AutoBuild/warning.txt')
+merged = re.findall('^merging (.*)', s, re.M)
+merging = re.findall('^no data: (.*)', s, re.M)
+merged = [x for x in merged if not x in merging]
 
 
 def readlist(file) -> list:
