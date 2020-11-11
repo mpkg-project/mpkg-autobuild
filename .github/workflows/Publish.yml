@@ -22,7 +22,7 @@ jobs:
         pip install git+https://github.com/mpkg-project/mpkg.git -q
         #pip install mpkg==0.0.6
         python3 main.py $repo
-        echo ::set-env name=date::$(date +%y%m%d)
+        echo "date=$(date +%y%m%d)" >> $GITHUB_ENV
     - name: Upload data to AutoBuild
       uses: svenstaro/upload-release-action@v2
       with:
@@ -45,5 +45,16 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: release/*
         tag: ${{ env.date }}
-        overwrite: false
+        overwrite: true
         file_glob: true
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        echo "$(date +%y%m%d)" > ver.txt
+        git add ver.txt
+        if [ -n "$(git status -s)" ]; then git commit -m "ver: $(date +%y%m%d)"; fi
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

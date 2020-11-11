@@ -16,8 +16,8 @@ jobs = 10
 s = GetPage(
     'https://github.com/mpkg-project/mpkg-autobuild/releases/download/AutoBuild/warning.txt')
 merged = re.findall('^merging (.*)', s, re.M)
-merging = re.findall('^no data: (.*)', s, re.M)
-merged = [x for x in merged if not x in merging]
+failed = re.findall('^failed: (.*)', s, re.M)
+merged = [x for x in merged if not x in failed]
 
 
 def readlist(file) -> list:
@@ -75,7 +75,7 @@ def getsofts(file, lock=[]):
     with Pool(jobs) as p:
         err = [result for result in p.map(Prepare, pkgs) if result]
     if err:
-        write('no data: ' + '|'.join([pkg.ID for pkg in err]))
+        write('failed: ' + '|'.join([pkg.ID for pkg in err]))
 
     for soft in [pkg.json_data['packages'] for pkg in pkgs if pkg not in err]:
         softs += soft
