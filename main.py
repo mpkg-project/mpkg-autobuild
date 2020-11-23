@@ -16,7 +16,7 @@ jobs = 10
 s = GetPage(
     'https://github.com/mpkg-project/mpkg-autobuild/releases/download/AutoBuild/warning.txt')
 merged = re.findall('^merging (.*)', s, re.M)
-failed = re.findall('^failed: (.*)', s, re.M)
+failed = re.findall('^failed: (.*)', s, re.M)[0].split('|')
 merged = [x for x in merged if not x in failed]
 
 
