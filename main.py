@@ -18,6 +18,8 @@ s = GetPage(
 merged = re.findall('^merging (.*)', s, re.M)
 failed = re.findall('^failed: (.*)', s, re.M)
 failed = failed[0].split('|') if failed else []
+for string in re.findall('^ dependency: (.*)', s, re.M):
+    failed += string.split('|')
 merged = [x for x in merged if not x in failed]
 
 
@@ -94,6 +96,9 @@ def merge_softs(old, new, output=False):
             else:
                 if output:
                     write(f'merging {k}')
+                    if 'depends' in v:
+                        write(' dependency: {0}'.format(
+                            '|'.join(v['depends'])))
                 new[k] = v
     return list(new.values())
 
