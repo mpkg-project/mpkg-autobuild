@@ -1,0 +1,24 @@
+name: Reactivate
+
+on: 
+  schedule:
+    - cron: '0 20 1 * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        echo "$(date +%y%m%d)" > ver.txt
+        git add ver.txt
+        if [ -n "$(git status -s)" ]; then git commit -m "ver: $(date +%y%m%d)"; fi
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
