@@ -25,26 +25,15 @@ jobs:
         echo "date=$(date +%y%m%d)" >> $GITHUB_ENV
         ls -al release
     - name: Upload data to AutoBuild
-      uses: svenstaro/upload-release-action@v2
+      uses: softprops/action-gh-release@v1
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: release/*
-        tag: AutoBuild
-        overwrite: true
-        file_glob: true
-    - name: Upload scoop.json to AutoBuild
-      uses: svenstaro/upload-release-action@v2
+        tag_name: AutoBuild
+        files: |
+          scoop.json
+          release/*
+    - name: Upload data to new tag
+      uses: softprops/action-gh-release@v1
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: scoop.json
-        tag: AutoBuild
-        overwrite: true
-        file_glob: true
-    - name: Upload data to release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: release/*
-        tag: ${{ env.date }}
-        overwrite: true
-        file_glob: true
+        tag_name: ${{ env.date }}
+        files: |
+          release/*
