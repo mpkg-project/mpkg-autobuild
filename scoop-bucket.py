@@ -39,8 +39,8 @@ class Package(Soft):
             for file in os.listdir(bucket):
                 if file.endswith('.json'):
                     data = load(str(bucket/file))
-                    data.mpkg_src = f'https://github.com/{repo}/blob/master/bucket/{file}'
                     if data:
+                        data.mpkg_src = f'https://github.com/{repo}/blob/master/bucket/{file}'
                         self.packages.append(data.asdict(simplify=True))
 
         names = [data['id'] for data in self.packages]
