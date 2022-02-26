@@ -48,9 +48,9 @@ class Package(Soft):
 
         for repo in ['microsoft/winget-pkgs']:
             manifests = extract(repo)/'manifests'
-            for lettter in self.letters:
-                if (manifests/lettter).exists():
-                    for publisher in (manifests/lettter).iterdir():
+            for letter in self.letters:
+                if (manifests/letter).exists():
+                    for publisher in (manifests/letter).iterdir():
                         for application in publisher.iterdir():
                             try:
                                 versions = [v for v in os.listdir(
@@ -62,6 +62,7 @@ class Package(Soft):
                                     if mainfest.name.endswith('.installer.yaml'):
                                         data = parser(mainfest)
                                         if data:
+                                            data.mpkg_src = f'https://github.com/{repo}/blob/master/manifests/{letter}/{publisher.name}/{application.name}/{version}/{mainfest.name}'
                                             data.id += '_winget'
                                             self.packages.append(
                                                 data.asdict(simplify=True))
