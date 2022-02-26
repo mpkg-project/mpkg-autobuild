@@ -20,7 +20,7 @@ jobs:
         repo: ${{ github.repository }}
       run: |
         mkdir release
-        pip install git+https://github.com/mpkg-project/mpkg.git -q
+        pip install https://github.com/mpkg-project/mpkg/archive/master.zip -q
         python3 main.py $repo
         echo "date=$(date +%y%m%d)" >> $GITHUB_ENV
         ls -al release
@@ -29,7 +29,7 @@ jobs:
       with:
         tag_name: AutoBuild
         files: |
-          scoop.json
+          auto/*
           release/*
     - name: Upload data to new tag
       uses: softprops/action-gh-release@v1

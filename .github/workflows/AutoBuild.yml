@@ -20,11 +20,12 @@ jobs:
       env:
         repo: ${{ github.repository }}
       run: |
-        pip install git+https://github.com/mpkg-project/mpkg.git -q
+        pip install https://github.com/mpkg-project/mpkg/archive/master.zip -q
         python3 main.py $repo
     - name: Upload data to AutoBuild
       uses: softprops/action-gh-release@v1
       with:
         tag_name: AutoBuild
         files: |
+          auto/*
           release/*

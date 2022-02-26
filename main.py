@@ -108,10 +108,12 @@ repo = argv[1]
 
 if not os.path.exists('release'):
     os.mkdir('release')
+if not os.path.exists('auto'):
+    os.mkdir('auto')
 
 os.system('mpkg set unsafe yes')
 
-for type in ['main', 'extras', 'scoop']:
+for type in ['main', 'extras', 'scoop', 'winget']:
     os.system(
         f'wget -q https://github.com/{repo}/releases/download/AutoBuild/{type}.json')
     if not os.path.exists(f'{type}.json'):
@@ -128,7 +130,9 @@ for type in ['main', 'extras', 'scoop']:
 
     data = {}
     data['packages'] = softs
-    filename = 'release/'+type+'.json' if not type == 'scoop' else 'scoop.json'
+    filename = 'release/'+type+'.json'
+    if type in ['scoop', 'winget']:
+        filename = 'auto/'+type+'.json'
     with open(filename, 'w', encoding='utf8') as f:
         f.write(json.dumps(data))
 
