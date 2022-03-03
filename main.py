@@ -134,7 +134,15 @@ for type in ['main', 'extras', 'scoop', 'winget']:
     if type in ['scoop', 'winget']:
         filename = 'auto/'+type+'.json'
     with open(filename, 'w', encoding='utf8') as f:
-        f.write(json.dumps(data))
+        try:
+            f.write(json.dumps(data))
+        except Exception as e:
+            print(e)
+            for soft in data['packages']:
+                try:
+                    soft = json.dumps(data)
+                except Exception as e:
+                    print(soft)
 
 if not os.path.exists('release/warning.txt'):
     os.system('echo pass > release/warning.txt')
