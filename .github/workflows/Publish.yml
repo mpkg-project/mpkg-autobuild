@@ -18,6 +18,7 @@ jobs:
     - name: Set up mpkg
       env:
         repo: ${{ github.repository }}
+        GH_API_TOKEN: ${{ secrets.GH_API_TOKEN }}
       run: |
         mkdir release
         pip install https://github.com/mpkg-project/mpkg/archive/master.zip -q
