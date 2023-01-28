@@ -103,6 +103,21 @@ def merge_softs(old, new, output=False):
     return list(new.values())
 
 
+def write_softs(file_dir: str, filename: str, softs: list):
+    data = {}
+    data['packages'] = softs
+    with open(f'{file_dir}/{filename}.json', 'w', encoding='utf8') as f:
+        try:
+            f.write(json.dumps(data))
+        except Exception as e:
+            print(e)
+            for soft in data['packages']:
+                try:
+                    soft = json.dumps(data)
+                except Exception as e:
+                    print(soft)
+
+
 PreInstall()
 repo = argv[1]
 
@@ -128,21 +143,19 @@ for type in ['main', 'extras', 'scoop', 'winget']:
     softs = merge_softs(softs, patch)
     softs = merge_softs(history, softs, output=True)
 
-    data = {}
-    data['packages'] = softs
-    filename = 'release/'+type+'.json'
-    if type in ['scoop', 'winget']:
-        filename = 'auto/'+type+'.json'
-    with open(filename, 'w', encoding='utf8') as f:
-        try:
-            f.write(json.dumps(data))
-        except Exception as e:
-            print(e)
-            for soft in data['packages']:
-                try:
-                    soft = json.dumps(data)
-                except Exception as e:
-                    print(soft)
+    arches = {soft['id'].split('|')[1]
+              for soft in softs if soft['id'].startswith('MPKG-ARCH|')}
+    softs_a = [soft for soft in softs if soft['id'].startswith('MPKG-ARCH|')]
+    softs = [soft for soft in softs if not soft['id'].startswith('MPKG-ARCH|')]
+    file_dir = 'auto' if type in ['scoop', 'winget'] else 'release'
+    write_softs(file_dir, type, softs)
+    for arch in arches:
+        id_pre = f'MPKG-ARCH|{arch}|'
+        softs_ = [s for s in softs_a if s['id'].startswith(id_pre)]
+        for s in softs_:
+            s['id'] = s['id'][len(id_pre):]
+        write_softs(file_dir, f'{type}_{arch}', softs_)
+
 
 if not os.path.exists('release/warning.txt'):
     os.system('echo pass > release/warning.txt')
