@@ -80,8 +80,7 @@ class Package(Soft):
                             for depth in manifests:
                                 soft = get_latest(manifests[depth], depth)
                                 if soft:
-                                    soft.mpkg_src = f'https://github.com/{repo}/blob/master/manifests/{
-                                        letter.name}/{publisher.name}/'+soft.mpkg_src
+                                    soft.mpkg_src = f'https://github.com/{repo}/blob/master/manifests/{letter.name}/{publisher.name}/{soft.mpkg_src}'  # noqa: E501
                                     self.packages.append(
                                         soft.asdict(simplify=True))
                         except Exception as err:
