@@ -41,6 +41,14 @@ def get_latest(manifests, depth=1):
     return data
 
 
+def get_iterdir(path: Path):
+    if path.is_dir():
+        return path.iterdir()
+    else:
+        print(f'warning: {path} is not a dir')
+        return []
+
+
 class Package(Soft):
     ID = 'winget-pkgs'
     # ref: https://docs.microsoft.com/zh-cn/windows/package-manager/package/repository
@@ -57,22 +65,23 @@ class Package(Soft):
 
         for repo in ['microsoft/winget-pkgs']:
             bucket = extract(repo)/'manifests'
-            for letter in bucket.iterdir():
-                for publisher in letter.iterdir():
-                    for application in publisher.iterdir():
+            for letter in get_iterdir(bucket):
+                for publisher in get_iterdir(letter):
+                    for application in get_iterdir(publisher):
                         try:
                             manifests = {1: [], 2: [], 3: []}
                             for manifest in application.glob('**/*.installer.yaml'):
                                 depth = manifest.relative_to(
                                     publisher).as_posix().count('/')-1
                                 if depth > 3:
-                                    print(manifest)
+                                    print(f'warning: ignore {manifest}')
                                 else:
                                     manifests[depth].append(manifest)
                             for depth in manifests:
                                 soft = get_latest(manifests[depth], depth)
                                 if soft:
-                                    soft.mpkg_src = f'https://github.com/{repo}/blob/master/manifests/{letter.name}/{publisher.name}/'+soft.mpkg_src
+                                    soft.mpkg_src = f'https://github.com/{repo}/blob/master/manifests/{
+                                        letter.name}/{publisher.name}/'+soft.mpkg_src
                                     self.packages.append(
                                         soft.asdict(simplify=True))
                         except Exception as err:
